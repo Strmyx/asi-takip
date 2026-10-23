@@ -248,23 +248,11 @@ def admin_panel():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
-
-with app.app_context():
-    db.create_all()
-    if not User.query.filter_by(username='admin').first():
-        admin_user = User(username='admin', password=generate_password_hash('Mb.492936'), is_admin=True)
-        # Örnek olarak asm1 kullanıcısı ekleyelim
-        normal_user = User(username='asm1', password=generate_password_hash('123456'), is_admin=False)
-        db.session.add(admin_user)
-        db.session.add(normal_user)
-        db.session.commit()
-with app.app_context():
-    db.create_all()
+    return redirect(url_for('login')) 
     
     # Yönetici (Admin) hesabı yoksa oluşturalım
     if not User.query.filter_by(username='admin').first():
-        admin_user = User(username='admin', password=generate_password_hash('admin123'), is_admin=True)
+        admin_user = User(username='admin', password=generate_password_hash('admin123456'), is_admin=True)
         db.session.add(admin_user)
     
     # Dosyadaki temizlenmiş kullanıcı adı listesi
