@@ -24,7 +24,6 @@ class VaccineEntry(db.Model):
     stock_qty = db.Column(db.Integer, default=0)
     requested_qty = db.Column(db.Integer, default=0)
     user = db.relationship('User', backref=db.backref('entries', lazy=True))
-
 VACCINE_LIST = [
     "HEXAXİM", "TETRAXİM", "KPA", "TD", "TDAB", 
     "HEPATİT A", "HEPATİT B", "KKK", "SUÇİÇEĞİ", "MENİNGOKOK"
@@ -265,16 +264,14 @@ with app.app_context():
         'durusu', 'hadimkoy', 'haracci', 'kasgarli_mahmut', 'merkez', 
         'tayakadin', 'tasoluk', 'imrahor', 'verem_savas_dispanseri', 
         'devlet_hastanesi', 'ozel_avrupa_hospital', 'gocmen_sagligi_merkezi', 
-        'hadimkoy_vefa', 'tasoluk_cavi_t_beskardes', 'nezihe_ozel', 
+        'hadimkoy_vefa', 'tasoluk_cavit_beskardes', 'nezihe_ozel', 
         '7_nolu_islambey', 'seyfettin_selim', '2_nolu_gocmen_sagligi_merkezi', 
         '8_nolu', 'mustafa_yenigun', '9_nolu', '1_nolu', 
         'abdullah_dokumcu', 'basaksehir_cam_ve_sakura_sehir_hastanesi_egitim'
     ]
     
-    # Her birim için hesap yoksa güvenli bir şekilde oluşturalım (Şifre: 123456)
     for uname in birim_usernames:
-        existing_user = User.query.filter_by(username=uname).first()
-        if not existing_user:
+        if not User.query.filter_by(username=uname).first():
             user_account = User(username=uname, password=generate_password_hash('123456'), is_admin=False)
             db.session.add(user_account)
             
