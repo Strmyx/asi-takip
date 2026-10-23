@@ -253,12 +253,38 @@ def logout():
 with app.app_context():
     db.create_all()
     if not User.query.filter_by(username='admin').first():
-        admin_user = User(username='admin', password=generate_password_hash('admin123'), is_admin=True)
+        admin_user = User(username='admin', password=generate_password_hash('Mb.492936'), is_admin=True)
         # Örnek olarak asm1 kullanıcısı ekleyelim
         normal_user = User(username='asm1', password=generate_password_hash('123456'), is_admin=False)
         db.session.add(admin_user)
         db.session.add(normal_user)
         db.session.commit()
-
+with app.app_context():
+    db.create_all()
+    
+    # Yönetici (Admin) hesabı yoksa oluşturalım
+    if not User.query.filter_by(username='admin').first():
+        admin_user = User(username='admin', password=generate_password_hash('admin123'), is_admin=True)
+        db.session.add(admin_user)
+    
+    # Dosyadaki temizlenmiş kullanıcı adı listesi
+    birim_usernames = [
+        'anadolu', 'asiyedokumcu', 'bolluca', 'bogazkoy', 'deliklikaya', 
+        'durusu', 'hadimkoy', 'haracci', 'kasgarlimahmut', 'merkezasm', 
+        'tayakadin', 'tasoluk', 'imrahor', 'vsd', 
+        'adh', 'avrupahospital', 'gocmen1','gocmen2', 
+        'vefa', 'cavitbeskardes', 'neziheozel', 
+        '7noluislambey', '6nolu',
+        '8_nolu', 'karaburun', '9_nolu', '1_nolu', 
+        'abdullah_dokumcu', 'egitimasm'
+    ]
+    
+    # Her birim için hesap yoksa oluşturalım (Varsayılan şifre: 123456)
+    for uname in birim_usernames:
+        if not User.query.filter_by(username=uname).first():
+            user_account = User(username=uname, password=generate_password_hash('123456'), is_admin=False)
+            db.session.add(user_account)
+            
+    db.session.commit()
 if __name__ == '__main__':
     app.run(debug=True)
