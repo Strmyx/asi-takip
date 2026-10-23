@@ -250,30 +250,32 @@ def logout():
     session.clear()
     return redirect(url_for('login')) 
     
-  with app.app_context():
-    # Eski tabloları tamamen sıfırlayıp temiz bir başlangıç yapalım
-    db.drop_all()
+with app.app_context():
     db.create_all()
     
-    # Yönetici (Admin) hesabı oluşturalım
-    admin_user = User(username='admin', password=generate_password_hash('admin123'), is_admin=True)
-    db.session.add(admin_user)
+    # Yönetici (Admin) hesabı yoksa oluşturalım
+    if not User.query.filter_by(username='admin').first():
+        admin_user = User(username='admin', password=generate_password_hash('admin123'), is_admin=True)
+        db.session.add(admin_user)
+        db.session.commit()
     
-    # Temizlenmiş birim listesi
+    # 29 Birimin kullanıcı adı listesi
     birim_usernames = [
         'anadolu', 'asiye_dokumcu', 'bolluca', 'bogazkoy', 'deliklikaya', 
         'durusu', 'hadimkoy', 'haracci', 'kasgarli_mahmut', 'merkez', 
         'tayakadin', 'tasoluk', 'imrahor', 'verem_savas_dispanseri', 
         'devlet_hastanesi', 'ozel_avrupa_hospital', 'gocmen_sagligi_merkezi', 
         'hadimkoy_vefa', 'tasoluk_cavi_t_beskardes', 'nezihe_ozel', 
-        '7_nolu_islambey', 'seyfettinci_selim', '2_nolu_gocmen_sagligi_merkezi', 
+        '7_nolu_islambey', 'seyfettin_selim', '2_nolu_gocmen_sagligi_merkezi', 
         '8_nolu', 'mustafa_yenigun', '9_nolu', '1_nolu', 
         'abdullah_dokumcu', 'basaksehir_cam_ve_sakura_sehir_hastanesi_egitim'
     ]
     
-    # Her birim için hesap oluşturalım (Varsayılan şifre: 123456)
+    # Her birim için hesap yoksa güvenli bir şekilde oluşturalım (Şifre: 123456)
     for uname in birim_usernames:
-        user_account = User(username=uname, password=generate_password_hash('123456'), is_admin=False)
-        db.session.add(user_account)
+        existing_user = User.query.filter_by(username=uname).first()
+        if not existing_user:
+            user_account = User(username=uname, password=generate_password_hash('123456'), is_admin=False)
+            db.session.add(user_account)
             
     db.session.commit()
