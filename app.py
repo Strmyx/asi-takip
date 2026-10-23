@@ -3,8 +3,10 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
-app = Flask(__name__)
-app.secret_key = 'gizli_anahtar_kelime'  # Oturum yönetimi için güvenli bir anahtar
+# Şablon klasörünün yolunu net bir şekilde belirtiyoruz:
+template_dir = os.path.abspath(os.path.dirname(__file__)) + '/templates'
+app = Flask(__name__, template_folder=template_dir)
+app.secret_key = 'gizli_anahtar_kelime'
 
 # Veritabanı Ayarları (Render veya yerel ortam için)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///asi.db')
